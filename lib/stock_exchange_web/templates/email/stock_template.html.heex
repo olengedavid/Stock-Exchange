@@ -1,0 +1,17 @@
+<div>
+  <h4>Dear, <%= @username %></h4>
+  <p> Thank you for your interest in our stock market product. We are excited to share with you some key details about this investment opportunity.</p>
+  <%= if is_list(@stocks) do %>
+      <%= for {_k, value} <- @stocks  do%>
+        <%= for stock <- value do%>
+      <p>The stock is estimated to have a price of <%= stock.featured_stock.stock_price %>, 
+      here are some additional information to help evaluate the stock value <%= stock.featured_stock.description%>
+      </p> <br>
+      <% end %>
+      <% end %> 
+    <% else %>
+      <p>The stock is estimated to have a price of <%= @stocks.stock_price %>, 
+      here are some additional information to help evaluate the stock value <%= @stocks.description%>
+      </p> 
+    <% end %>
+</div> 
