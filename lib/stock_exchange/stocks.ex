@@ -9,7 +9,6 @@ defmodule StockExchange.Stocks do
   alias StockExchange.Stocks.StockOption
   alias StockExchange.Stocks.FeaturedStock
   alias StockExchange.Accounts.User
-  alias StockExchange.Stocks.UserFavouriteStock
 
   def list_featured_stocks() do
     Repo.all(FeaturedStock)

@@ -1,6 +1,5 @@
 defmodule StockExchange.NewCompanyWorker do
   use GenServer
-  alias StockExchange.Stocks.{FeaturedStock}
   alias StockExchange.Stocks
   alias StockExchange.SendEmailWorker
 
@@ -30,6 +29,7 @@ defmodule StockExchange.NewCompanyWorker do
       %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
     ]
 
+    # companies = []
     schedule_work({:save_company, companies}, 1)
     {:noreply, state}
   end

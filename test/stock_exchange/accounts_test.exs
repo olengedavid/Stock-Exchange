@@ -8,7 +8,7 @@ defmodule StockExchange.AccountsTest do
 
     import StockExchange.AccountsFixtures
 
-    @invalid_attrs %{age: nil, name: nil}
+    @invalid_attrs %{age: nil, name: nil, email: nil}
 
     test "list_users/0 returns all users" do
       user = user_fixture()
@@ -21,7 +21,7 @@ defmodule StockExchange.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{age: 42, name: "some name"}
+      valid_attrs = %{age: 42, name: "some name", email: "email@example.com"}
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
       assert user.age == 42

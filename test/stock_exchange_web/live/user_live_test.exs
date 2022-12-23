@@ -4,9 +4,9 @@ defmodule StockExchangeWeb.UserLiveTest do
   import Phoenix.LiveViewTest
   import StockExchange.AccountsFixtures
 
-  @create_attrs %{age: 42, name: "some name"}
-  @update_attrs %{age: 43, name: "some updated name"}
-  @invalid_attrs %{age: nil, name: nil}
+  @create_attrs %{age: 42, name: "some name", email: "myemail@example.com"}
+  @update_attrs %{age: 43, name: "some updated name", email: "email@example.com"}
+  @invalid_attrs %{age: nil, name: nil, email: nil}
 
   defp create_user(_) do
     user = user_fixture()

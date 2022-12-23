@@ -44,7 +44,9 @@ defmodule StockExchange.SocketNotificationWorker do
       |> Enum.each(fn maps ->
         maps
         |> Enum.each(fn featured_stock ->
-          with :ok <- Stocks.broadcast("outgoingstock:latest", %{response: featured_stock}) |> IO.inspect(label: "brod+++") do
+          with :ok <-
+                 Stocks.broadcast("outgoingstock:latest", %{response: featured_stock})
+                 |> IO.inspect(label: "brod+++") do
             Stocks.update_featured_stock(featured_stock, %{socket_notified: true})
           end
         end)

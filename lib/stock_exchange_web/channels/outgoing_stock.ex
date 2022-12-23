@@ -1,6 +1,5 @@
 defmodule StockExchangeWeb.OutgoingStockChannel do
   use Phoenix.Channel
-  alias StockExchange.Stocks
 
   @impl true
   def join("outgoingstock:latest", _message, socket) do
@@ -14,7 +13,7 @@ defmodule StockExchangeWeb.OutgoingStockChannel do
   end
 
   @impl true
-  def handle_info(message, socket) do
+  def handle_info(_message, socket) do
     {:noreply, socket}
   end
 end

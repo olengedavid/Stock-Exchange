@@ -12,7 +12,8 @@ defmodule StockExchange.AccountsFixtures do
       attrs
       |> Enum.into(%{
         age: 42,
-        name: "some name"
+        name: "some name",
+        email: "myemail@example.com"
       })
       |> StockExchange.Accounts.create_user()
 
