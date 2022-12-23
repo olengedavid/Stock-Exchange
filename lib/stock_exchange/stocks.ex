@@ -6,8 +6,8 @@ defmodule StockExchange.Stocks do
   import Ecto.Query, warn: false
   alias StockExchange.Repo
 
-  alias StockExchange.Stocks.StockOption
-  alias StockExchange.Stocks.FeaturedStock
+  alias StockExchange.Stocks.{StockOption, FeaturedStock, UserFavouriteStock}
+  alias StockExchange.Stocks
   alias StockExchange.Accounts.User
 
   def list_featured_stocks() do
@@ -36,6 +36,18 @@ defmodule StockExchange.Stocks do
       on_conflict: [set: [category: attrs["category"]]],
       conflict_target: :ticker_symbol
     )
+  end
+
+  def create_stock_option(attrs \\ %{}) do
+    %StockOption{}
+    |> StockOption.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_user_favourite_stock(attrs \\ %{}) do
+    %UserFavouriteStock{}
+    |> UserFavouriteStock.changeset(attrs)
+    |> Repo.insert()
   end
 
   def update_featured_stock(%FeaturedStock{} = featured_stock, attrs) do
