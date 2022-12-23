@@ -9,8 +9,8 @@ defmodule StockExchange.SendEmailWorker do
     GenServer.start(__MODULE__, initial_state, name: __MODULE__)
   end
 
-  def send_multiple_stock_different_users_email(element) do
-    GenServer.cast(__MODULE__, {:fetch_new_inserted_stocks, element})
+  def send_multiple_stock_different_users_email() do
+    GenServer.cast(__MODULE__, :fetch_new_inserted_stocks)
   end
 
   def send_one_stock_different_users_email(featured_stock) do
@@ -25,8 +25,8 @@ defmodule StockExchange.SendEmailWorker do
   end
 
   @impl true
-  def handle_cast({:fetch_new_inserted_stocks, element}, state) do
-    featured_stocks = fetch_new_inserted_stocks(element)
+  def handle_cast(:fetch_new_inserted_stocks, state) do
+    featured_stocks = fetch_new_inserted_stocks()
 
     case featured_stocks do
       [] ->
@@ -65,8 +65,8 @@ defmodule StockExchange.SendEmailWorker do
     Process.send_after(self(), message, time)
   end
 
-  defp fetch_new_inserted_stocks(%{"inserted_at" => inserted_at}) do
-    Stocks.get_newly_inserted_favourite_stocks(inserted_at)
+  defp fetch_new_inserted_stocks() do
+    Stocks.get_inserted_favourite_stocks()
   end
 
   defp send_multiple_stock_emails(stocks) do

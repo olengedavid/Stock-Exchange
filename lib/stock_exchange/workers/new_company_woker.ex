@@ -47,8 +47,8 @@ defmodule StockExchange.NewCompanyWorker do
   end
 
   defp insert_companies(companies) do
-    with {:ok, timestamp} <- Stocks.insert_many_featured_stocks(companies) do
-      SendEmailWorker.send_multiple_stock_different_users_email(%{"inserted_at" => timestamp})
+    with {:ok, _} <- Stocks.insert_many_featured_stocks(companies) do
+      SendEmailWorker.send_multiple_stock_different_users_email()
       {:ok, :insert_complete}
     else
       _ ->

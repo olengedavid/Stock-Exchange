@@ -48,22 +48,19 @@ defmodule StockExchange.Stocks do
     timestamp = generate_timestamp()
 
     Repo.transaction(fn ->
-      with :ok <-
-             datasets
-             |> Stream.map(fn dataset ->
-               dataset = Map.put(dataset, :inserted_at, timestamp)
-               Map.put(dataset, :updated_at, timestamp)
-             end)
-             |> Stream.chunk_every(200)
-             |> Stream.each(fn maps ->
-               Repo.insert_all(FeaturedStock, maps,
-                 placeholders: %{timestamp: timestamp},
-                 on_conflict: :nothing
-               )
-             end)
-             |> Stream.run() do
-        timestamp
-      end
+      datasets
+      |> Stream.map(fn dataset ->
+        dataset = Map.put(dataset, :inserted_at, timestamp)
+        Map.put(dataset, :updated_at, timestamp)
+      end)
+      |> Stream.chunk_every(200)
+      |> Stream.each(fn maps ->
+        Repo.insert_all(FeaturedStock, maps,
+          placeholders: %{timestamp: timestamp},
+          on_conflict: :nothing
+        )
+      end)
+      |> Stream.run()
     end)
   end
 
@@ -94,11 +91,10 @@ defmodule StockExchange.Stocks do
     |> select([user, featured_stock: fs], %{user: user, featured_stock: fs})
   end
 
-  def get_newly_inserted_favourite_stocks(inserted_at) do
+  def get_inserted_favourite_stocks() do
     stock_options = names_of_all_stock_options()
 
     user_favourite_stocks_query(stock_options)
-    |> where([featured_stock: fs], ^inserted_at >= fs.inserted_at)
     |> Repo.all()
   end
 
@@ -135,5 +131,3 @@ defmodule StockExchange.Stocks do
     )
   end
 end
-
-# StockExchange.Stocks.user_favourite_stocks(["Rea Estate"])
