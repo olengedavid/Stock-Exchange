@@ -19,7 +19,8 @@ defmodule StockExchange.Application do
       # Start a worker by calling: StockExchange.Worker.start_link(arg)
 
       {StockExchange.NewCompanyWorker, %{}},
-      {StockExchange.SendEmailWorker, %{}}
+      {StockExchange.SendEmailWorker, %{}},
+      {StockExchange.SocketNotificationWorker, %{}}
       # StockExchange.Worker.start_link()
     ]
 

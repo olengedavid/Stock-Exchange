@@ -10,7 +10,7 @@ defmodule StockExchangeWeb.IncomingStockChannel do
 
   @impl true
   def handle_in("add_stock", payload, socket) when is_map(payload) do
-    deliver_email_and_publish_event(payload, socket)
+    deliver_email_and_publish_event(payload)
     {:noreply, socket}
   end
 
@@ -21,8 +21,7 @@ defmodule StockExchangeWeb.IncomingStockChannel do
 
   @impl true
   def handle_info(%{"featured_stock" => payload}, socket) do
-    IO.inspect(label: "passing ++>>>><<<<")
-    deliver_email_and_publish_event(payload, socket)
+    deliver_email_and_publish_event(payload)
     {:noreply, socket}
   end
 
@@ -37,12 +36,14 @@ defmodule StockExchangeWeb.IncomingStockChannel do
     {:noreply, socket}
   end
 
-  def deliver_email_and_publish_event(payload, socket) do
+  def deliver_email_and_publish_event(payload) do
     featured_stock = Stocks.create_featured_stock(payload)
 
     with %StockExchange.Stocks.FeaturedStock{} <- featured_stock do
-      broadcast("outgoingstock:latest", %{content: featured_stock}) 
-      |> IO.inspect(label: "delivered +++>>>>>")
+      with :ok <- broadcast("outgoingstock:latest", %{response: featured_stock}) do
+        Stocks.update_featured_stock(featured_stock, %{socket_notified: true})
+      end
+
       SendEmailWorker.send_one_stock_different_users_email(featured_stock)
     end
   end

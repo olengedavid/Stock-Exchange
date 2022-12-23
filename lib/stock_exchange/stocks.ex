@@ -110,6 +110,12 @@ defmodule StockExchange.Stocks do
     |> where([stock_option: so], so.name == ^option)
   end
 
+  def get_stocks_not_socket_notified do
+    FeaturedStock
+    |> where([fs], fs.socket_notified == ^false)
+    |> Repo.all()
+  end
+
   def get_users_for_a_favourite_stock(featured_stock) do
     Repo.all(get_users_by_stock_option(featured_stock.category))
   end
@@ -120,6 +126,14 @@ defmodule StockExchange.Stocks do
       x.featured_stock
       |> update_featured_stock(%{email_notified: true})
     end)
+  end
+
+  def broadcast(topic, message) do
+    Phoenix.PubSub.broadcast(
+      StockExchange.PubSub,
+      topic,
+      message
+    )
   end
 end
 

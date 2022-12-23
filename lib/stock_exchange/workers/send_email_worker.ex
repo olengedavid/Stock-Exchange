@@ -78,7 +78,7 @@ defmodule StockExchange.SendEmailWorker do
 
     with {:ok, :emails_sent} <-
            grouped_stocks
-           |> Enum.chunk_every(50)
+           |> Enum.chunk_every(200)
            |> deliver_multiple_stock_emails(first_stock.user) do
       Stocks.update_email_delivered_stocks_status(stocks)
     end
@@ -107,7 +107,7 @@ defmodule StockExchange.SendEmailWorker do
   defp send_one_stock_emails(users, featured_stock) do
     with {:ok, :emails_sent} <-
            users
-           |> Enum.chunk_every(50)
+           |> Enum.chunk_every(200)
            |> deliver_one_stock_emails(featured_stock) do
       Stocks.update_featured_stock(featured_stock, %{email_notified: true})
     end

@@ -36,13 +36,11 @@ defmodule StockExchangeWeb.Simulation.OutgoingStock do
     {:ok, socket |> assign(:stocks, [])}
   end
 
-  def handle_params(params, _url, socket) do
-    IO.inspect(params, label: "received ++++")
+  def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
-  def handle_info(message, socket) do
-    IO.inspect(message, label: "received ++++")
-    {:noreply, socket}
+  def handle_info(%{response: stock}, socket) do
+    {:noreply, socket |> assign(:stocks, [stock | socket.assigns.stocks])}
   end
 end

@@ -26,7 +26,6 @@ defmodule StockExchangeWeb.Simulation.IncomingStock do
     {:ok, socket}
   end
 
-
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
