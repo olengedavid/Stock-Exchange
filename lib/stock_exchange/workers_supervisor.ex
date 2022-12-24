@@ -15,6 +15,7 @@ defmodule StockExchange.WorkerSupervisor do
       []
     else
       [
+        {Task.Supervisor, name: StockExchange.TaskSupervisor},
         {StockExchange.NewCompanyWorker, %{}},
         {StockExchange.SendEmailWorker, %{}},
         {StockExchange.SocketNotificationWorker, %{}}

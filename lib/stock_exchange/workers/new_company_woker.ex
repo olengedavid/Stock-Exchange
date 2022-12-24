@@ -47,12 +47,27 @@ defmodule StockExchange.NewCompanyWorker do
   end
 
   defp insert_companies(companies) do
-    with {:ok, _} <- Stocks.insert_many_featured_stocks(companies) do
-      SendEmailWorker.send_multiple_stock_different_users_email()
-      {:ok, :insert_complete}
-    else
-      _ ->
+    case companies do
+      [] ->
         {:ok, :insert_complete}
+
+      [_ | _] ->
+        insert_companies_task(companies)
     end
+  end
+
+  defp insert_companies_task(dataset) do
+    dataset =
+      dataset
+      |> Stream.chunk_every(1000)
+
+    Task.Supervisor.async_stream_nolink(
+      StockExchange.TaskSupervisor,
+      dataset,
+      fn data -> Stocks.insert_many_featured_stocks(data) end,
+      ordered: false,
+      max_concurrency: 3
+    )
+    |> Stream.run()
   end
 end

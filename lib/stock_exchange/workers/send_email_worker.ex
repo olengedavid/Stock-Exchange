@@ -9,10 +9,6 @@ defmodule StockExchange.SendEmailWorker do
     GenServer.start(__MODULE__, initial_state, name: __MODULE__)
   end
 
-  def send_multiple_stock_different_users_email() do
-    GenServer.cast(__MODULE__, :fetch_new_inserted_stocks)
-  end
-
   def send_one_stock_different_users_email(featured_stock) do
     GenServer.cast(__MODULE__, {:send_one_stock_emails, featured_stock})
   end
@@ -21,20 +17,22 @@ defmodule StockExchange.SendEmailWorker do
 
   @impl true
   def init(init_state \\ %{}) do
+    schedule_work(:send_multiple_stock_emails, 2000)
     {:ok, init_state}
   end
 
   @impl true
-  def handle_cast(:fetch_new_inserted_stocks, state) do
+  def handle_info(:send_multiple_stock_emails, state) do
     featured_stocks = fetch_new_inserted_stocks()
 
     case featured_stocks do
       [] ->
+        schedule_work(:send_multiple_stock_emails, 5000)
         {:noreply, state}
 
       _ ->
-        state = Map.put(state, :featured_stocks, featured_stocks)
-        schedule_work({:send_multiple_stock_emails, featured_stocks}, 1)
+        send_multiple_stock_emails(featured_stocks)
+        schedule_work(:send_multiple_stock_emails, 2000)
         {:noreply, state}
     end
   end
@@ -55,18 +53,12 @@ defmodule StockExchange.SendEmailWorker do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info({:send_multiple_stock_emails, stocks}, state) do
-    send_multiple_stock_emails(stocks)
-    {:noreply, state}
-  end
-
   def schedule_work(message, time) do
     Process.send_after(self(), message, time)
   end
 
   defp fetch_new_inserted_stocks() do
-    Stocks.get_inserted_favourite_stocks()
+    Stocks.get_inserted_favourite_stocks_email_not_notified()
   end
 
   defp send_multiple_stock_emails(stocks) do
@@ -76,52 +68,64 @@ defmodule StockExchange.SendEmailWorker do
 
     first_stock = grouped_stocks[1] |> hd()
 
-    with {:ok, :emails_sent} <-
-           grouped_stocks
-           |> Enum.chunk_every(200)
-           |> deliver_multiple_stock_emails(first_stock.user) do
-      Stocks.update_email_delivered_stocks_status(stocks)
-    end
+    chunked_stocks =
+      grouped_stocks
+      |> Enum.chunk_every(200)
+
+    chunked_stocks_length = length(chunked_stocks) - 1
+
+    chunked_stocks
+    |> Enum.with_index(fn element, index ->
+      if chunked_stocks_length == index do
+        with {:ok, :emails_sent} <-
+               deliver_last_multiple_stock_emails(element, first_stock.user) do
+          Stocks.update_email_delivered_stocks_status(stocks)
+        end
+      else
+        deliver_multiple_stock_emails(element, first_stock.user)
+      end
+    end)
   end
 
-  defp deliver_multiple_stock_emails([_head | _tail = []] = featured_stocks, user) do
-    featured_stocks
-    |> Enum.each(fn chunked_stocks ->
-      user
-      |> EmailFormat.new_stock_update(chunked_stocks)
-      |> StockExchange.Mailer.deliver()
-    end)
+  defp deliver_last_multiple_stock_emails(featured_stocks, user) do
+    user
+    |> EmailFormat.new_stock_update(featured_stocks)
+    |> StockExchange.Mailer.deliver()
 
     {:ok, :emails_sent}
   end
 
   defp deliver_multiple_stock_emails(featured_stocks, user) do
-    featured_stocks
-    |> Enum.each(fn chunked_stocks ->
-      user
-      |> EmailFormat.new_stock_update(chunked_stocks)
-      |> StockExchange.Mailer.deliver()
-    end)
+    user
+    |> EmailFormat.new_stock_update(featured_stocks)
+    |> StockExchange.Mailer.deliver()
   end
 
   defp send_one_stock_emails(users, featured_stock) do
-    with {:ok, :emails_sent} <-
-           users
-           |> Enum.chunk_every(200)
-           |> deliver_one_stock_emails(featured_stock) do
-      Stocks.update_featured_stock(featured_stock, %{email_notified: true})
-    end
+    chunked_users =
+      users
+      |> Enum.chunk_every(200)
+
+    chunked_users_length = length(chunked_users) - 1
+
+    chunked_users
+    |> Enum.with_index(fn element, index ->
+      if chunked_users_length == index do
+        with {:ok, :emails_sent} <- deliver_last_one_stock_emails(element, featured_stock) do
+          Stocks.update_featured_stock(featured_stock, %{email_notified: true})
+        end
+      else
+        deliver_one_stock_emails(element, featured_stock)
+      end
+    end)
   end
 
-  defp deliver_one_stock_emails([_head | _tail = []] = users, featured_stock) do
+  defp deliver_last_one_stock_emails(users, featured_stock) do
     users
-    |> Enum.each(fn chunked_users ->
-      chunked_users
-      |> Enum.map(fn user ->
-        user
-        |> EmailFormat.new_stock_update(featured_stock)
-        |> StockExchange.Mailer.deliver()
-      end)
+    |> Enum.map(fn user ->
+      user
+      |> EmailFormat.new_stock_update(featured_stock)
+      |> StockExchange.Mailer.deliver()
     end)
 
     {:ok, :emails_sent}
@@ -129,13 +133,10 @@ defmodule StockExchange.SendEmailWorker do
 
   defp deliver_one_stock_emails(users, featured_stock) do
     users
-    |> Enum.each(fn chunked_users ->
-      chunked_users
-      |> Enum.map(fn user ->
-        user
-        |> EmailFormat.new_stock_update(featured_stock)
-        |> StockExchange.Mailer.deliver()
-      end)
+    |> Enum.map(fn user ->
+      user
+      |> EmailFormat.new_stock_update(featured_stock)
+      |> StockExchange.Mailer.deliver()
     end)
   end
 end

@@ -7,7 +7,6 @@ defmodule StockExchange.Stocks do
   alias StockExchange.Repo
 
   alias StockExchange.Stocks.{StockOption, FeaturedStock, UserFavouriteStock}
-  alias StockExchange.Stocks
   alias StockExchange.Accounts.User
 
   def list_featured_stocks() do
@@ -103,10 +102,11 @@ defmodule StockExchange.Stocks do
     |> select([user, featured_stock: fs], %{user: user, featured_stock: fs})
   end
 
-  def get_inserted_favourite_stocks() do
+  def get_inserted_favourite_stocks_email_not_notified() do
     stock_options = names_of_all_stock_options()
 
     user_favourite_stocks_query(stock_options)
+    |> where([featured_stock: fs], fs.email_notified == ^false)
     |> Repo.all()
   end
 
@@ -120,6 +120,7 @@ defmodule StockExchange.Stocks do
   def get_stocks_not_socket_notified do
     FeaturedStock
     |> where([fs], fs.socket_notified == ^false)
+    |> limit(200)
     |> Repo.all()
   end
 
@@ -129,10 +130,12 @@ defmodule StockExchange.Stocks do
 
   def update_email_delivered_stocks_status(stocks) do
     stocks
-    |> Enum.map(fn x ->
+    |> Stream.uniq_by(fn x -> x.featured_stock.id end)
+    |> Stream.each(fn x ->
       x.featured_stock
       |> update_featured_stock(%{email_notified: true})
     end)
+    |> Stream.run()
   end
 
   def broadcast(topic, message) do

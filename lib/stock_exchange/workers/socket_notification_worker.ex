@@ -14,7 +14,7 @@ defmodule StockExchange.SocketNotificationWorker do
   # server
 
   def init(init_state) do
-    schedule_work(:fetch_featured_stocks, 20000)
+    schedule_work(:fetch_featured_stocks, 10000)
     {:ok, init_state}
   end
 
@@ -23,12 +23,12 @@ defmodule StockExchange.SocketNotificationWorker do
 
     case stocks do
       [] ->
-        schedule_work(:fetch_featured_stocks, 1000)
+        schedule_work(:fetch_featured_stocks, 10000)
         {:noreply, state}
 
       [_head | _tail] ->
         send_socket_notifications(stocks)
-        schedule_work(:fetch_featured_stocks, 1000)
+        schedule_work(:fetch_featured_stocks, 10000)
         {:noreply, state}
     end
   end
@@ -38,19 +38,18 @@ defmodule StockExchange.SocketNotificationWorker do
   end
 
   defp send_socket_notifications(stocks) do
-    Repo.transaction(fn ->
-      stocks
-      |> Enum.chunk_every(200)
-      |> Enum.each(fn maps ->
-        maps
-        |> Enum.each(fn featured_stock ->
-          with :ok <-
-                 Stocks.broadcast("outgoingstock:latest", %{response: featured_stock})
-                 |> IO.inspect(label: "brod+++") do
-            Stocks.update_featured_stock(featured_stock, %{socket_notified: true})
-          end
-        end)
-      end)
-    end)
+    Task.Supervisor.async_stream_nolink(
+      StockExchange.TaskSupervisor,
+      stocks,
+      fn featured_stock ->
+        with :ok <-
+               Stocks.broadcast("outgoingstock:latest", %{response: featured_stock}) do
+          Stocks.update_featured_stock(featured_stock, %{socket_notified: true})
+        end
+      end,
+      ordered: false,
+      max_concurrency: 3
+    )
+    |> Stream.run()
   end
 end
