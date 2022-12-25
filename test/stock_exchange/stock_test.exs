@@ -115,5 +115,33 @@ defmodule StockExchange.StocksTest do
       assert Enum.count(stocks) == 2
       assert stock.id == last_inserted_stock.id
     end
+
+    test "insert_many_featured_stocks/1 insert featured stocks when given a list of attributes" do
+      companies = [
+          %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+          %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
+          %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
+        ]
+
+        Stocks.insert_many_featured_stocks(companies)
+        stocks = Stocks.list_ordered_featured_stocks()
+
+        assert Enum.count(stocks) == 3
+    end
+
+    test "insert_many_featured_stocks/1 duplicate records are not inserted" do
+      companies = [
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+      ]
+
+      Stocks.insert_many_featured_stocks(companies)
+      stocks = Stocks.list_ordered_featured_stocks()
+
+      assert Enum.count(stocks) == 3
+    end
   end
 end

@@ -17,6 +17,10 @@ defmodule StockExchange.Stocks do
     Repo.all(StockOption)
   end
 
+  def get_featured_stock_by_id(id) do
+    Repo.get_by(FeaturedStock, %{id: id})
+  end
+
   def get_stock_option(id), do: Repo.get(StockOption, id)
 
   def get_stock_option_by_name(name) do

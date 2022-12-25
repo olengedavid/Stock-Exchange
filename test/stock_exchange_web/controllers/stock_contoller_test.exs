@@ -2,7 +2,7 @@ defmodule StockExchangeWeb.StockControllerTest do
   use StockExchangeWeb.ConnCase
   alias StockExchange.AccountsFixtures
   alias StockExchange.Stocks
-  
+
   describe "stocks" do
     setup do
       user = AccountsFixtures.user_fixture()

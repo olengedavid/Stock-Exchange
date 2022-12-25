@@ -1,7 +1,6 @@
 defmodule StockExchange.NewCompanyWorker do
   use GenServer
   alias StockExchange.Stocks
-  alias StockExchange.SendEmailWorker
 
   @time_interval 1000
 
@@ -23,13 +22,7 @@ defmodule StockExchange.NewCompanyWorker do
     # save companies
     # after insertation schedule the work
 
-    companies = [
-      %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
-      %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
-      %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
-    ]
-
-    # companies = []
+    companies = fetch_companies()
     schedule_work({:save_company, companies}, 1)
     {:noreply, state}
   end
@@ -46,6 +39,15 @@ defmodule StockExchange.NewCompanyWorker do
     Process.send_after(self(), message, time)
   end
 
+  defp fetch_companies(companies \\ []) do
+    companies
+    # companies = [
+    #   %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+    #   %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
+    #   %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
+    # ]
+  end
+
   defp insert_companies(companies) do
     case companies do
       [] ->
@@ -53,6 +55,7 @@ defmodule StockExchange.NewCompanyWorker do
 
       [_ | _] ->
         insert_companies_task(companies)
+        {:ok, :insert_complete}
     end
   end
 
