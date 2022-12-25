@@ -28,6 +28,9 @@ defmodule StockExchangeWeb.Router do
     live "/users/:id/show/edit", UserLive.Show, :edit
     live "/incoming-stock/simulation", Simulation.IncomingStock
     live "/outgoing-stock/simulation", Simulation.OutgoingStock
+
+    get "/favourite-stocks/:user_id", StockController, :show
+    get "/featured-stocks", StockController, :index
   end
 
   # Other scopes may use custom stacks.

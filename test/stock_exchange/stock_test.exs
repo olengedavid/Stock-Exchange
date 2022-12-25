@@ -68,5 +68,52 @@ defmodule StockExchange.StocksTest do
       assert user_favourite_stock.user_id == user.id
       assert user_favourite_stock.stock_option_id == stock_option.id
     end
+
+    test "get_favourite_stock_by/1 fetches users favourite stock", %{
+      user: user,
+      featured_stock_attrs: featured_stock_attrs
+    } do
+      {:ok, stock_option} = Stocks.create_stock_option(%{name: "Real Estate"})
+      Stocks.create_user_favourite_stock(%{user_id: user.id, stock_option_id: stock_option.id})
+      Stocks.create_featured_stock(featured_stock_attrs)
+
+      attrs = %{
+        stock_price: 226_262,
+        ticker_symbol: "700R",
+        market_cap: 368_829,
+        category: "Technology"
+      }
+
+      Stocks.create_featured_stock(attrs)
+
+      stocks = Stocks.get_favourite_stock_by(user.id)
+      stock = hd(stocks)
+
+      assert Enum.count(stocks) == 1
+      assert stock.category == "Real Estate"
+      refute stock.category == "Technology"
+    end
+
+    test "list_ordered_featured_stocks/ fetches featured stocks ordered in descending order", %{
+      featured_stock_attrs: featured_stock_attrs
+    } do
+      last_inserted_stock = Stocks.create_featured_stock(featured_stock_attrs)
+
+      attrs = %{
+        stock_price: 226_262,
+        ticker_symbol: "800R",
+        market_cap: 368_829,
+        category: "Technology",
+        inserted_at: ~N[2022-12-25 10:01:12]
+      }
+
+      Stocks.create_featured_stock(attrs)
+
+      stocks = Stocks.list_ordered_featured_stocks()
+      stock = hd(stocks)
+
+      assert Enum.count(stocks) == 2
+      assert stock.id == last_inserted_stock.id
+    end
   end
 end

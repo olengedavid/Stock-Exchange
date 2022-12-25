@@ -92,6 +92,11 @@ defmodule StockExchange.Stocks do
     |> NaiveDateTime.truncate(:second)
   end
 
+  def list_ordered_featured_stocks() do
+    from(fs in FeaturedStock, order_by: [desc: fs.inserted_at])
+    |> Repo.all()
+  end
+
   def user_favourite_stocks_query(stock_options) when is_list(stock_options) do
     from(user in User)
     |> join(:inner, [user], us in assoc(user, :user_stock_options), as: :user_stock)
@@ -100,6 +105,19 @@ defmodule StockExchange.Stocks do
       as: :featured_stock
     )
     |> select([user, featured_stock: fs], %{user: user, featured_stock: fs})
+  end
+
+  def get_favourite_stock_by(user_id) do
+    from(user in User)
+    |> where([user], user.id == ^user_id)
+    |> join(:inner, [user], us in assoc(user, :user_stock_options), as: :user_stock)
+    |> join(:inner, [_user, user_stock: us], o in assoc(us, :stock_option), as: :stock_option)
+    |> join(:inner, [_user, stock_option: o], fs in FeaturedStock,
+      on: fs.category == o.name,
+      as: :featured_stock
+    )
+    |> select([_user, featured_stock: fs], fs)
+    |> Repo.all()
   end
 
   def get_inserted_favourite_stocks_email_not_notified() do
