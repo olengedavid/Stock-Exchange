@@ -4,7 +4,7 @@ defmodule StockExchange.Repo.Migrations.CreateStockTables do
   def change do
     create table("featured_stocks") do
       add :stock_price, :float
-      add :ticker_symbol, :string
+      add :ticker_symbol, :string, null: false
       add :market_cap, :float
       add :category, :string
       add :location, :string

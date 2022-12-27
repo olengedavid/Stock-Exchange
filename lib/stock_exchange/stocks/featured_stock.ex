@@ -27,7 +27,7 @@ defmodule StockExchange.Stocks.FeaturedStock do
       :email_notified,
       :socket_notified
     ])
-    |> validate_required([:ticker_symbol])
+    |> validate_required([:ticker_symbol, :category])
     |> unique_constraint(:ticker_symbol)
   end
 end

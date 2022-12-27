@@ -118,15 +118,15 @@ defmodule StockExchange.StocksTest do
 
     test "insert_many_featured_stocks/1 insert featured stocks when given a list of attributes" do
       companies = [
-          %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
-          %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
-          %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
-        ]
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
+      ]
 
-        Stocks.insert_many_featured_stocks(companies)
-        stocks = Stocks.list_ordered_featured_stocks()
+      Stocks.insert_many_featured_stocks(companies)
+      stocks = Stocks.list_ordered_featured_stocks()
 
-        assert Enum.count(stocks) == 3
+      assert Enum.count(stocks) == 3
     end
 
     test "insert_many_featured_stocks/1 duplicate records are not inserted" do
@@ -135,13 +135,25 @@ defmodule StockExchange.StocksTest do
         %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
         %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
         %{stock_price: 23.5, category: "IT", ticker_symbol: "100"},
-        %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
+        %{stock_price: 23.5, category: "IT", ticker_symbol: "123"}
       ]
 
       Stocks.insert_many_featured_stocks(companies)
       stocks = Stocks.list_ordered_featured_stocks()
 
       assert Enum.count(stocks) == 3
+    end
+
+    test "update_email_delivered_stocks_status/1 update email_notified column", %{
+      featured_stock_attrs: featured_stock_attrs
+    } do
+     featured_stock =  Stocks.create_featured_stock(featured_stock_attrs)
+      [%{featured_stock: featured_stock}]
+      |> Stocks.update_email_delivered_stocks_status()
+
+      updated_stock = Stocks.get_featured_stock_by_id(featured_stock.id)
+      assert updated_stock.email_notified == true
+      assert featured_stock.id == updated_stock.id
     end
   end
 end
