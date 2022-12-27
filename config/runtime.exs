@@ -63,6 +63,12 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :swoosh, :api_client, Swoosh.ApiClient.Hackney
+
+  config :stock_exchange, StockExchange.Mailer,
+    adapter: Swoosh.Adapters.Sendgrid,
+    api_key: System.get_env("SENDGRID_API_KEY")
+
   # ## Configuring the mailer
   #
   # In production you need to configure the mailer to use a different adapter.

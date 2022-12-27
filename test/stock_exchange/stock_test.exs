@@ -147,7 +147,8 @@ defmodule StockExchange.StocksTest do
     test "update_email_delivered_stocks_status/1 update email_notified column", %{
       featured_stock_attrs: featured_stock_attrs
     } do
-     featured_stock =  Stocks.create_featured_stock(featured_stock_attrs)
+      featured_stock = Stocks.create_featured_stock(featured_stock_attrs)
+
       [%{featured_stock: featured_stock}]
       |> Stocks.update_email_delivered_stocks_status()
 

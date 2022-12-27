@@ -41,11 +41,12 @@ defmodule StockExchange.NewCompanyWorker do
 
   defp fetch_companies(companies \\ []) do
     companies
-    # companies = [
+    # [
     #   %{stock_price: 23.5, category: "IT", ticker_symbol: "123"},
     #   %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
     #   %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
     # ]
+    
   end
 
   defp insert_companies(companies) do

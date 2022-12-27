@@ -4,7 +4,6 @@ defmodule StockExchange.Stocks.UserFavouriteStock do
 
   alias StockExchange.Accounts.User
   alias StockExchange.Stocks.StockOption
-  alias StockExchange.Stocks.FeaturedStock
 
   schema "user_favourite_stocks" do
     belongs_to :user, User, foreign_key: :user_id

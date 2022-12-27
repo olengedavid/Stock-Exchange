@@ -10,5 +10,5 @@ defmodule StockExchangeWeb.Socket do
   end
 
   @impl Phoenix.Socket
-  def id(socket), do: nil
+  def id(_socket), do: nil
 end

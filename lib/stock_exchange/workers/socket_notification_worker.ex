@@ -1,9 +1,6 @@
 defmodule StockExchange.SocketNotificationWorker do
   use GenServer
   alias StockExchange.Stocks
-  alias StockExchange.Repo
-
-  @time_interval 1000
 
   # client
 

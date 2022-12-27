@@ -124,6 +124,7 @@ defmodule StockExchange.Stocks do
       on: fs.category in ^stock_options,
       as: :featured_stock
     )
+    |> distinct(true)
     |> select([user, featured_stock: fs], %{user: user, featured_stock: fs})
   end
 

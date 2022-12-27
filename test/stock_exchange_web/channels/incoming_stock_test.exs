@@ -10,6 +10,4 @@ defmodule StockExchangeWeb.IncomingStockChannelTest do
 
     %{socket: socket}
   end
-
-
 end
