@@ -24,7 +24,7 @@ config :stock_exchange, StockExchangeWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-# config :stock_exchange, StockExchange.Mailer, adapter: Swoosh.Adapters.Local
+config :stock_exchange, StockExchange.Mailer, adapter: Swoosh.Adapters.Local
 
 # Swoosh API client is needed for adapters other than SMTP.
 
@@ -45,6 +45,10 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# enviromental variables
+config :stock_exchange,
+  websocket_url: "ws://localhost:443/"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
