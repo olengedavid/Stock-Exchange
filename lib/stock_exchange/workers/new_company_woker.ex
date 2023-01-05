@@ -46,7 +46,6 @@ defmodule StockExchange.NewCompanyWorker do
     #   %{stock_price: 23.5, category: "IT", ticker_symbol: "345"},
     #   %{stock_price: 23.5, category: "IT", ticker_symbol: "100"}
     # ]
-    
   end
 
   defp insert_companies(companies) do

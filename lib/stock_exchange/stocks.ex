@@ -78,8 +78,9 @@ defmodule StockExchange.Stocks do
     Repo.transaction(fn ->
       datasets
       |> Stream.map(fn dataset ->
-        dataset = Map.put(dataset, :inserted_at, timestamp)
-        Map.put(dataset, :updated_at, timestamp)
+        dataset
+        |> Map.put(:inserted_at, timestamp)
+        |> Map.put(:updated_at, timestamp)
       end)
       |> Stream.chunk_every(200)
       |> Stream.each(fn maps ->

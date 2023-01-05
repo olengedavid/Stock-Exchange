@@ -18,7 +18,8 @@ defmodule StockExchange.WorkerSupervisor do
         {Task.Supervisor, name: StockExchange.TaskSupervisor},
         {StockExchange.NewCompanyWorker, %{}},
         {StockExchange.SendEmailWorker, %{}},
-        {StockExchange.SocketNotificationWorker, %{}}
+        {StockExchange.SocketNotificationWorker, %{}},
+        {StockExchange.StockClientWorker, %{}}
       ]
     end
   end
