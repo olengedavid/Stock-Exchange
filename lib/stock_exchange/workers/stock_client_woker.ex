@@ -27,7 +27,7 @@ defmodule StockExchange.StockClientWorker do
 
       [_ | _] ->
 
-        Stocks.insert_many_featured_stocks(atom_keys)
+        Stocks.insert_many_featured_stocks(response)
         {:ok, state}
     end
   end
