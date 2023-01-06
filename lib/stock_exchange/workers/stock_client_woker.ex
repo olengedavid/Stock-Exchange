@@ -25,7 +25,6 @@ defmodule StockExchange.StockClientWorker do
         {:ok, state}
 
       [_ | _] ->
-
         Stocks.insert_many_featured_stocks(response)
         {:ok, state}
     end
@@ -45,7 +44,7 @@ defmodule StockExchange.StockClientWorker do
 
   def convert_to_atom_keys(maps) do
     maps
-    |> Enum.map(fn map -> 
+    |> Enum.map(fn map ->
       for {key, val} <- map, into: %{}, do: {String.to_atom(key), val}
     end)
   end
