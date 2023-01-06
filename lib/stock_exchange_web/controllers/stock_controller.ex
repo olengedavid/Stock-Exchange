@@ -1,6 +1,7 @@
 defmodule StockExchangeWeb.StockController do
   use StockExchangeWeb, :controller
   alias StockExchange.Stocks
+  action_fallback StockExchangeWeb.FallbackController
 
   def index(conn, _params) do
     stocks = Stocks.list_ordered_featured_stocks()
