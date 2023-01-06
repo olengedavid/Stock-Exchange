@@ -1,16 +1,16 @@
 # StockExchange
 
 ## Database design
-All stock information received is saved in the `featured_stocks` table. Any stock category that my be of intrest to users are saved in the `stock_options` table, when a user has interest in a given stock category the information is saved on `user_favourite_stocks` table.
+All stock information received are saved in the `featured_stocks` table. Any stock category that may be of interest to users are saved in the `stock_options` table, when a user has interest in a given stock category the information is saved on `user_favourite_stocks` table.
 
 ## Newly listed companies
-  For period check of newly listed companies,the api has a genserver that calls itself with dummy data after some seconds,and save the information on featured_stocks table. For data integrity, a constraint key is set at the `ticker_symbol` column of the stock companies.
+  For periodic check of newly listed companies,the api has a genserver that calls itself with dummy data after some seconds,and save the information on `featured_stocks` table. For data integrity, a constraint key is set at the `ticker_symbol` column of the stock companies.
 
 ## Stock companies published over pubsub
   To test this locally the mock [`websocket server stock`](https://github.com/olengedavid/Mock-websocket-server) will have to be started which runs at port 443. This websocket server sends events with a dummy data that is handled by `stock_client_worker`.
 
 ## Publishing websocket events to mobile clients
-  Once stock companie are received and saved on the database, socket_notification worker will broadcast these events over pubsub. To demonstrate this, open [`outgoing stock`](http://localhost:4000/outgoing-stock/simulation) live view page, which will display the messages once broadcasted.
+  Once stock companies are received and saved on the database, socket_notification worker will broadcast these events over pubsub. To demonstrate this, open [`outgoing stock`](http://localhost:4000/outgoing-stock/simulation) live view page, which will display the messages once broadcasted.
 
 ## Send email updates
   For users who have marked the stock category as favourite,`send_email_worker` will notify them once the stock information is received.
