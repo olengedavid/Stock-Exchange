@@ -10,8 +10,13 @@ defmodule StockExchange.StockClientWorker do
   def start_link(state) do
     websocket_url = Application.fetch_env!(:stock_exchange, :websocket_url)
 
-    WebSockex.start_link(websocket_url, __MODULE__, state)
+    WebSockex.start_link(websocket_url, __MODULE__, state, handle_initial_conn_failure: true)
   end
+
+  # @impl true
+  # def handle_disconnect(%{reason: %WebSockex.ConnError{original: :econnrefused}}, state) do
+  #   exit(:normal)
+  # end
 
   @impl true
   def handle_frame({:text, payload}, state) when is_list(payload) do
