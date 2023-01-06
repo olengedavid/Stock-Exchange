@@ -7,7 +7,7 @@ All stock information received is saved in the `featured_stocks` table. Any stoc
   For period check of newly listed companies,the api has a genserver that calls itself with dummy data after some seconds,and save the information on featured_stocks table. For data integrity, a constraint key is set at the `ticker_symbol` column of the stock companies.
 
 ## Stock companies published over pubsub
-  To test this locally the mock websocket server will have to be started which runs at port 443. This websocket server sends events with a dummy data that is handled by `stock_client_worker`.
+  To test this locally the mock [`websocket server stock`](https://github.com/olengedavid/Mock-websocket-server) will have to be started which runs at port 443. This websocket server sends events with a dummy data that is handled by `stock_client_worker`.
 
 ## Publishing websocket events to mobile clients
   Once stock companie are received and saved on the database, socket_notification worker will broadcast these events over pubsub. To demonstrate this, open [`outgoing stock`](http://localhost:4000/outgoing-stock/simulation) live view page, which will display the messages once broadcasted.
@@ -18,7 +18,7 @@ All stock information received is saved in the `featured_stocks` table. Any stoc
 ## API endpoints
   There are two api endpoints `/favourite-stocks/:user_id` which list user's favourite stock option, ordered from the latest stock, and `/featured-stocks` which list all companies stock information.
 
-
+## 
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
