@@ -1,9 +1,11 @@
 defmodule StockExchange.SocketNotificationWorker do
   @moduledoc """
-  This module sends socket notification to 'outgoingstock:latest' websocket channel, which resembles the mobile client
+  This module sends socket notification to 'outgoingstock:latest' websocket channel, 
+  which resembles the mobile client
   """
   use GenServer
   alias StockExchange.Stocks
+  @time_interval 10000
 
   # client
 
@@ -14,7 +16,7 @@ defmodule StockExchange.SocketNotificationWorker do
   # server
 
   def init(init_state) do
-    schedule_work(:fetch_featured_stocks, 10000)
+    schedule_work(:fetch_featured_stocks, @time_interval)
     {:ok, init_state}
   end
 
@@ -23,12 +25,12 @@ defmodule StockExchange.SocketNotificationWorker do
 
     case stocks do
       [] ->
-        schedule_work(:fetch_featured_stocks, 10000)
+        schedule_work(:fetch_featured_stocks, @time_interval)
         {:noreply, state}
 
       [_head | _tail] ->
         send_socket_notifications(stocks)
-        schedule_work(:fetch_featured_stocks, 10000)
+        schedule_work(:fetch_featured_stocks, @time_interval)
         {:noreply, state}
     end
   end
@@ -48,7 +50,7 @@ defmodule StockExchange.SocketNotificationWorker do
         end
       end,
       ordered: false,
-      max_concurrency: 3
+      max_concurrency: 7
     )
     |> Stream.run()
   end

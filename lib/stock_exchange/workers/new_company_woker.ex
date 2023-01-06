@@ -21,16 +21,11 @@ defmodule StockExchange.NewCompanyWorker do
   end
 
   def handle_info(:fetch_new_stock_companies, state) do
-    # fetch list of companies
-    # save companies
-    # after insertation schedule the work
-
     companies = fetch_companies()
-    schedule_work({:save_company, companies}, 1)
-    {:noreply, state}
+    {:noreply, Map.put(state, :companies, companies), {:continue, :save_company}}
   end
 
-  def handle_info({:save_company, companies}, state) do
+  def handle_continue(:save_company, %{companies: companies} = state) do
     with {:ok, :insert_complete} <- insert_companies(companies) do
       schedule_work(:fetch_new_stock_companies, 10000)
     end
@@ -72,7 +67,7 @@ defmodule StockExchange.NewCompanyWorker do
       dataset,
       fn data -> Stocks.insert_many_featured_stocks(data) end,
       ordered: false,
-      max_concurrency: 3
+      max_concurrency: 7
     )
     |> Stream.run()
   end

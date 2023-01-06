@@ -1,4 +1,8 @@
 defmodule StockExchangeWeb.Simulation.OutgoingStock do
+  @moduledoc """
+  This module is for personal test and exploaration, the page joins 'outgoingstock:*' channel 
+  and send a stock message that is inputed by a user through a form.
+  """
   use StockExchangeWeb, :live_view
 
   def render(assigns) do
