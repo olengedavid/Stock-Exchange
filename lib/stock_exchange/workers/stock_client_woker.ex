@@ -1,7 +1,6 @@
 defmodule StockExchange.StockClientWorker do
-  #   use GenServer
   @moduledoc """
-
+    This module is the websocket client that receives events from external stock api provider 
   """
   use WebSockex
 

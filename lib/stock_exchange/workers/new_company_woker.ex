@@ -1,4 +1,7 @@
 defmodule StockExchange.NewCompanyWorker do
+  @moduledoc """
+  This module fetches stock data from external api and insert into the database
+  """
   use GenServer
   alias StockExchange.Stocks
 

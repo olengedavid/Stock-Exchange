@@ -1,4 +1,8 @@
 defmodule StockExchangeWeb.Simulation.IncomingStock do
+  @moduledoc """
+  This liveview page subscribes to 'incomingstock:latest' channel and 
+  displays messages received.
+  """
   use StockExchangeWeb, :live_view
 
   def render(assigns) do

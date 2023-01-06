@@ -1,4 +1,7 @@
 defmodule StockExchange.EmailFormat do
+  @moduledoc """
+  This module renders the email template for stock companies
+  """
   use Phoenix.Swoosh, view: StockExchangeWeb.EmailView
 
   def new_stock_update(user, stocks) do

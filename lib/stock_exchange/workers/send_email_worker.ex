@@ -1,4 +1,7 @@
 defmodule StockExchange.SendEmailWorker do
+  @moduledoc """
+  This module  send stock data as emails to users who have marked the stock category as favourite
+  """
   use GenServer
 
   alias StockExchange.Stocks

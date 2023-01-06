@@ -1,6 +1,6 @@
 defmodule StockExchange.Stocks do
   @moduledoc """
-  The Stocks context.
+  The stocks context.
   """
 
   import Ecto.Query, warn: false

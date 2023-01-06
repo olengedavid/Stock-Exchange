@@ -1,4 +1,7 @@
 defmodule StockExchange.SocketNotificationWorker do
+  @moduledoc """
+  This module sends socket notification to 'outgoingstock:latest' websocket channel, which resembles the mobile client
+  """
   use GenServer
   alias StockExchange.Stocks
 

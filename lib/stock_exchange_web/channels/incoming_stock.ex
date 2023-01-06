@@ -1,4 +1,9 @@
 defmodule StockExchangeWeb.IncomingStockChannel do
+   @moduledoc """
+   This channel module handles notifications and events from 'incomingstock:latest' channel
+   NB, this module is not in use, written for personal test and exploration
+   """
+
   use Phoenix.Channel
   alias StockExchange.Stocks
   alias StockExchange.SendEmailWorker
