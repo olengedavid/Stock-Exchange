@@ -5,6 +5,7 @@ defmodule StockExchange.SocketNotificationWorker do
   """
   use GenServer
   alias StockExchange.Stocks
+  require Logger
   @time_interval 10000
 
   # client
@@ -33,6 +34,12 @@ defmodule StockExchange.SocketNotificationWorker do
         schedule_work(:fetch_featured_stocks, @time_interval)
         {:noreply, state}
     end
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    Logger.debug("Unexpected message in StockExchange.SocketNotificationWorker: #{inspect(msg)}")
+    {:noreply, state}
   end
 
   def schedule_work(message, time) do

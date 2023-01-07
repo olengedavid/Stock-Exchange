@@ -4,6 +4,7 @@ defmodule StockExchange.NewCompanyWorker do
   """
   use GenServer
   alias StockExchange.Stocks
+  require Logger
 
   @time_interval 10000
 
@@ -23,6 +24,12 @@ defmodule StockExchange.NewCompanyWorker do
   def handle_info(:fetch_new_stock_companies, state) do
     companies = fetch_companies()
     {:noreply, Map.put(state, :companies, companies), {:continue, :save_company}}
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    Logger.debug("Unexpected message in StockExchange.NewCompanyWorker: #{inspect(msg)}")
+    {:noreply, state}
   end
 
   def handle_continue(:save_company, %{companies: companies} = state) do

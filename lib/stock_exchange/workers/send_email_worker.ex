@@ -6,6 +6,7 @@ defmodule StockExchange.SendEmailWorker do
 
   alias StockExchange.Stocks
   alias StockExchange.EmailFormat
+  require Logger
   # client
 
   def start_link(initial_state \\ %{}) do
@@ -38,6 +39,12 @@ defmodule StockExchange.SendEmailWorker do
         schedule_work(:send_multiple_stock_emails, 2000)
         {:noreply, state}
     end
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    Logger.debug("Unexpected message in StockExchange.SendEmailWorker: #{inspect(msg)}")
+    {:noreply, state}
   end
 
   @impl true
