@@ -19,10 +19,6 @@ defmodule StockExchange.StockClientWorker do
   end
 
   @impl true
-  def handle_frame({:text, payload}, state) when is_list(payload) do
-    {:ok, state}
-  end
-
   def handle_frame({:text, payload}, state) do
     case response = Jason.decode!(payload) do
       %{} ->
